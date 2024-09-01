@@ -1,9 +1,12 @@
 #!/bin/bash
 
-echo "Start install hobot boot: kernel image and drivers"
 depmod -a 4.14.87
 
 config_file="/lib/modules-load.d/10-hobot_modules.conf"
+
+if [ ! -f "/sys/class/socinfo/soc_uid" ]; then
+    exit 0
+fi
 
 # for modname in `cat ${config_file}`
 while read modname
@@ -11,7 +14,6 @@ do
     if [ -n "$modname" ];then
         # echo -e "#mod=${modname#*#} mod=${modname}"
         if [ x"${modname#*#}" == x"${modname}" ];then
-            echo "modprobe :$modname"
             modprobe $modname
             if [ $? != 0 ];then
                 echo "modlue: [ $modname ] install failed"!
